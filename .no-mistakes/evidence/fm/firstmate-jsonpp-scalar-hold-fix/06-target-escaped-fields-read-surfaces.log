@@ -1,0 +1,33 @@
+=== escaped quoted-scalar fields across the read surfaces: TARGET f0c026d ===
+code root: /home/anannap/.no-mistakes/worktrees/4e33b609bf5c/01M2A43Z6VRST1P28D9A3GV5QW
+
+--- how tasks-axi shows the escaped scalars ---
+  title: "Audit the \"route\" head \\ and the Opus NLU review layer"
+  hold_reason: "captain must pick \"harden now\" \\ or defer the Opus NLU review layer"
+  hold_kind: captain
+  body: "Captain hold set: 2026-09-12T00:00:00Z"
+--- how the raw backlog persists them ---
+- [ ] ishira-opus-nlu-audit - Audit the "route" head \ and the Opus NLU review layer (repo: ishira) (kind: scout) (since 2026-09-12) (hold: captain must pick "harden now" \ or defer the Opus NLU review layer) (hold-kind: captain)
+
+PASS  open --identity resolves an escaped-body captain call (exit 0)
+PASS  open --identity reports the hold stamp with no resolution record
+board summary: Audit the "route" head \ and the Opus NLU review layer: captain must pick "harden now" \ o…
+PASS  the board surfaces the escaped title and reason unescaped
+PASS  the board classifies it as a captain hold
+PASS  diverged reads an escaped-scalar row without a decode error (exit 0)
+PASS  diverged emitted no decode error
+
+--- the answered row, raw on disk ---
+## Done
+- [x] ishira-opus-nlu-audit - Audit the "route" head \ and the Opus NLU review layer (repo: ishira) (kind: scout) (done 2026-09-12) (hold: captain must pick "harden now" \ or defer the Opus NLU review layer) (hold-kind: captain)
+  Resolution recorded by fm-captain-hold.
+  Decision digest: d78d9906aece26410b97ecc2997708dd1615b115281ba90b159eb832f685bfab
+  Resolution mode: answered
+
+  Captain decision:
+  Harden the "route" head now; the \ escape path ships behind the audit gate.
+
+PASS  the recorded decision kept its quotes and single backslash
+PASS  no literal backslash-n leaked into the persisted backlog
+
+=== TARGET f0c026d: 0 failure(s) ===

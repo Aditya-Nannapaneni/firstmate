@@ -1,0 +1,48 @@
+=== Firstmate captain-hold lifecycle: MID 06aaea4 (hold fixed, retain not) (body flavor: plain) ===
+code root: /tmp/fm-mid-root
+perl: 5.016003 / JSON::PP 2.27202 / tasks-axi 0.2.5
+
+### The completed Opus NLU audit and the parallel event-time work are on the backlog
+body as tasks-axi shows it before the hold:
+  body: "Audit scope: Opus NLU review layer."
+
+### Captain hold: the audit waits on the review-layer hardening decision
+ishira-opus-nlu-audit
+body as tasks-axi shows it after the hold:
+  body: "Captain hold set: 2026-09-12T00:00:00Z\n\nAudit scope: Opus NLU review layer."
+
+### Completion gate: the audit registers itself as its own captain call
+complete: ishira-opus-nlu-audit captain-call inventory reviewed (ishira-opus-nlu-audit)
+
+### Cleanup (fm-teardown.sh): release the worker, retain the captain call
+FAILED: cleanup exited 1
+--- teardown stdout ---
+--- teardown stderr ---
+●━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+●  WATCHER DOWN - SUPERVISION IS OFF
+●  2 task(s) in flight, but no watcher has a fresh beacon (last beat: never, grace 300s).
+●  Trust the emitted supervision protocol for this harness; do not use shell & for watcher repair.
+●  This is a supervision warning only; the guarded operation WILL still run.
+●  watcher supervision needs Stop-owned automatic recovery; inspect the hook registration and startup status before ending the turn.
+●━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+JSON text must be an object or array (but found number, string, true, false or null, use allow_nonref to allow this) at -e line 6.
+error: ishira-opus-nlu-audit's endpoint and local copy are cleaned up, but its captain-held backlog item could not be returned to Queued atomically (could not decode the task body of ishira-opus-nlu-audit); the pending retention is recorded and the next session start retries it
+--- the audit row after the failed cleanup ---
+task:
+  id: ishira-opus-nlu-audit
+  title: Audit Project Ishira Opus NLU review layer
+  state: in_flight
+  blocked: no
+  blocked_by: none
+  held: yes
+  hold_reason: captain must choose the review-layer hardening plan
+  hold_kind: captain
+  hold_until: "-"
+  kind: scout
+  repo: ishira
+  priority: "-"
+  created: 2026-09-12
+  closed: "-"
+  deps: none
+  links: none
+  body: "Captain hold set: 2026-09-12T00:00:00Z\n\nAudit scope: Opus NLU review layer."

@@ -1,0 +1,12 @@
+=== mutant A: shared decoder re-escapes newlines ===
+fm-captain-hold: task fm-stub-held-row did not retain its hold-set stamp
+not ok - holding on a beads-configured home failed without a markdown backlog
+
+=== mutant B: shared decoder leaves embedded quotes escaped ===
+not ok - the captain hold did not round-trip the escapes and line structure of a quoted tasks-axi scalar (expected 'Captain hold set: 2026-09-12T00:00:00Z
+
+First line with a quoted "route" and a literal backslash: \ before the end.
+Second line after the encoded newline.', got 'Captain hold set: 2026-09-12T00:00:00Z
+
+First line with a quoted \"route\" and a literal backslash: \ before the end.
+Second line after the encoded newline.')

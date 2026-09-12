@@ -1,0 +1,7 @@
+=== escaped quoted-scalar fields across the read surfaces: BASE a27646c ===
+code root: /tmp/fm-base-root
+
+JSON text must be an object or array (but found number, string, true, false or null, use allow_nonref to allow this) at -e line 3.
+JSON text must be an object or array (but found number, string, true, false or null, use allow_nonref to allow this) at -e line 3.
+fm-captain-hold: could not decode the existing body for ishira-opus-nlu-audit
+FAIL  hold refused an escaped reason

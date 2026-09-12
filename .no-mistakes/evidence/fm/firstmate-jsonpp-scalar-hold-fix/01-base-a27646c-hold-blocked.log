@@ -1,0 +1,13 @@
+=== Firstmate captain-hold lifecycle: BASE a27646c (pre-fix) (body flavor: plain) ===
+code root: /tmp/fm-base-root
+perl: 5.016003 / JSON::PP 2.27202 / tasks-axi 0.2.5
+
+### The completed Opus NLU audit and the parallel event-time work are on the backlog
+body as tasks-axi shows it before the hold:
+  body: "Audit scope: Opus NLU review layer."
+
+### Captain hold: the audit waits on the review-layer hardening decision
+JSON text must be an object or array (but found number, string, true, false or null, use allow_nonref to allow this) at -e line 3.
+JSON text must be an object or array (but found number, string, true, false or null, use allow_nonref to allow this) at -e line 3.
+fm-captain-hold: could not decode the existing body for ishira-opus-nlu-audit
+FAILED: hold

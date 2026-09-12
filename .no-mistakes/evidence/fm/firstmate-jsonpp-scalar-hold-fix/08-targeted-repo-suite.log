@@ -1,0 +1,3 @@
+ok - captain-hold mutations address the beads backend without a markdown override
+ok - cleanup leaves a captain-held work item open with its deliverable, and only an answer closes it
+ok - release and scout report retention distinguish deliveries from rejected merge answers

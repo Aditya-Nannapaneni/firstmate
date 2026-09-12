@@ -1,0 +1,83 @@
+=== Firstmate captain-hold lifecycle: TARGET escapes (body flavor: escapes) ===
+code root: /home/anannap/.no-mistakes/worktrees/4e33b609bf5c/01M2A43Z6VRST1P28D9A3GV5QW
+perl: 5.016003 / JSON::PP 2.27202 / tasks-axi 0.2.5
+
+### The completed Opus NLU audit and the parallel event-time work are on the backlog
+body as tasks-axi shows it before the hold:
+  body: "Audit finding: the \"route\" classifier drops a literal backslash \\ mid-utterance.\nSecond line after the encoded newline: latency budget is 120ms."
+
+### Captain hold: the audit waits on the review-layer hardening decision
+ishira-opus-nlu-audit
+body as tasks-axi shows it after the hold:
+  body: "Captain hold set: 2026-09-12T00:00:00Z\n\nAudit finding: the \"route\" classifier drops a literal backslash \\ mid-utterance.\nSecond line after the encoded newline: latency budget is 120ms."
+
+### Completion gate: the audit registers itself as its own captain call
+complete: ishira-opus-nlu-audit captain-call inventory reviewed (ishira-opus-nlu-audit)
+
+### Cleanup (fm-teardown.sh): release the worker, retain the captain call
+--- teardown stdout ---
+teardown ishira-opus-nlu-audit complete (window firstmate:fm-ishira-opus-nlu-audit, worktree /tmp/fm-run-target-escapes/home/projects/missing-ishira-opus-nlu-audit)
+Backlog: ishira-opus-nlu-audit stays open in /tmp/fm-run-target-escapes/home/data/backlog.md, still held for the captain with its deliverable recorded. Relay the question and close it only with bin/fm-captain-hold.sh answer.
+--- the retained audit row ---
+task:
+  id: ishira-opus-nlu-audit
+  title: Audit Project Ishira Opus NLU review layer data/ishira-opus-nlu-audit/report.md
+  state: queued
+  blocked: no
+  blocked_by: none
+  held: yes
+  hold_reason: captain must choose the review-layer hardening plan
+  hold_kind: captain
+  hold_until: "-"
+  kind: scout
+  repo: ishira
+  priority: "-"
+  created: 2026-09-12
+  closed: "-"
+  deps: none
+  links: "report:data/ishira-opus-nlu-audit/report.md"
+  body: "Captain hold set: 2026-09-12T00:00:00Z\n\nAudit finding: the \"route\" classifier drops a literal backslash \\ mid-utterance.\nSecond line after the encoded newline: latency budget is 120ms.\n\nDeliverable of the finished work: report data/ishira-opus-nlu-audit/report.md"
+
+### The captain registers the review-layer hardening decision
+answered: ishira-opus-nlu-audit
+--- the answered audit row ---
+task:
+  id: ishira-opus-nlu-audit
+  title: Audit Project Ishira Opus NLU review layer data/ishira-opus-nlu-audit/report.md
+  state: done
+  blocked: no
+  blocked_by: none
+  held: no
+  hold_reason: captain must choose the review-layer hardening plan
+  hold_kind: captain
+  hold_until: "-"
+  kind: scout
+  repo: ishira
+  priority: "-"
+  created: "-"
+  closed: 2026-09-12
+  deps: none
+  links: "report:data/ishira-opus-nlu-audit/report.md"
+  body: "Resolution recorded by fm-captain-hold.\nDecision digest: a3dd4d8d05d7ad891cb5180de8ee5dbd1ea12d6a67c63f5e5275e569c9ed65fe\nResolution mode: answered\n\nCaptain decision:\nHarden the review layer: gate Opus NLU rollout on the \"route\" classifier audit.\n\nAudit finding: the \"route\" classifier drops a literal backslash \\ mid-utterance.\nSecond line after the encoded newline: latency budget is 120ms.\n\nDeliverable of the finished work: report data/ishira-opus-nlu-audit/report.md"
+
+### The parallel event-time work is untouched
+task:
+  id: ishira-event-time-alignment
+  title: Align Project Ishira event-time windows
+  state: in_flight
+  blocked: no
+  blocked_by: none
+  held: no
+  hold_reason: "-"
+  hold_kind: "-"
+  hold_until: "-"
+  kind: scout
+  repo: ishira
+  priority: "-"
+  created: 2026-09-12
+  closed: "-"
+  deps: none
+  links: none
+  body: ""
+
+=== TARGET escapes: every step of the lifecycle completed ===
