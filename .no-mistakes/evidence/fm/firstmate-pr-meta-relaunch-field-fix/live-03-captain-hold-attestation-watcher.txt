@@ -1,0 +1,27 @@
+=== real fm-captain-hold.sh complete on a ship task with an armed merge poll ===
+
+--- fm-captain-hold.sh complete (real) ---
+    complete: task-f captain-call inventory reviewed (sample-route-call)
+
+--- task record after the real attestation appended to it ---
+    1:window=firstmate:fm-task-f
+    2:worktree=/tmp/fm-captain-hold.ahORH4/attest-fixed/projects/missing-task-f
+    3:project=/tmp/fm-captain-hold.ahORH4/attest-fixed/projects/sample
+    4:harness=codex
+    5:kind=ship
+    6:mode=ship
+    7:spawn_gen=fixture-task-f
+    8:pr=https://github.com/example/repository/pull/17
+    9:pr_head=0123456789abcdef0123456789abcdef01234567
+    10:decisions_reviewed=1
+    11:decision_keys=sample-route-call
+
+--- one real bin/fm-watch.sh cycle, BASE-COMMIT parser (a09090d) ---
+    check: rejected unauthenticated state checks: <state>/task-b.check.sh
+    merge poll left armed: 1
+
+--- one real bin/fm-watch.sh cycle, FIXED parser (7f19993) ---
+    check: <state>/task-f.check.sh: merged
+    merge poll left armed: 0 (0 = retired on detection)
+
+DRIVER COMPLETE

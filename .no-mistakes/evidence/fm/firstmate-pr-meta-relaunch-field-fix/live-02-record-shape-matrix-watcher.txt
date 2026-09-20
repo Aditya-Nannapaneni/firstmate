@@ -1,0 +1,93 @@
+=== post-pr= record shapes, one real bin/fm-watch.sh cycle each ===
+
+### legacy-incarnation-stamp
+    writer          : bin/fm-teardown.sh --legacy-record (spawn_gen stamp)
+    appended after pr=: spawn_gen=s1700000000.1234.5678
+    expectation     : merged
+    base a09090d    : check: rejected unauthenticated state checks: <state>/task-a.check.sh
+    fixed 7f19993   : check: <state>/task-a.check.sh: merged
+    poll left armed after the fixed cycle: 0
+    RESULT: PASS (fixed detects the merge)
+
+### decision-attestation
+    writer          : bin/fm-captain-hold.sh complete (decision attestation pair)
+    appended after pr=: decisions_reviewed=1|decision_keys=sample-held-call
+    expectation     : merged
+    base a09090d    : check: rejected unauthenticated state checks: <state>/task-a.check.sh
+    fixed 7f19993   : check: <state>/task-a.check.sh: merged
+    poll left armed after the fixed cycle: 0
+    RESULT: PASS (fixed detects the merge)
+
+### relaunch-transaction
+    writer          : bin/fm-spawn.sh --relaunch (control_relaunch_tx)
+    appended after pr=: control_relaunch_tx=1361.20260920T115139Z.14154
+    expectation     : merged
+    base a09090d    : check: rejected unauthenticated state checks: <state>/task-a.check.sh
+    fixed 7f19993   : check: <state>/task-a.check.sh: merged
+    poll left armed after the fixed cycle: 0
+    RESULT: PASS (fixed detects the merge)
+
+### trace-carrier
+    writer          : bin/fm-spawn.sh --relaunch (traceparent on a trace-enabled home)
+    appended after pr=: traceparent=00-b4ef836375c302ce564f290e8bb7e4cc-318194d797e50bd5-01
+    expectation     : merged
+    base a09090d    : check: rejected unauthenticated state checks: <state>/task-a.check.sh
+    fixed 7f19993   : check: <state>/task-a.check.sh: merged
+    poll left armed after the fixed cycle: 0
+    RESULT: PASS (fixed detects the merge)
+
+### x-request-link
+    writer          : bin/fm-x-lib.sh (pre-existing tolerated link fields)
+    appended after pr=: x_request=request-fixture|x_request_ts=1700000000|x_platform=x
+    expectation     : merged
+    base a09090d    : check: <state>/task-a.check.sh: merged
+    fixed 7f19993   : check: <state>/task-a.check.sh: merged
+    poll left armed after the fixed cycle: 0
+    RESULT: PASS (fixed detects the merge)
+
+### unknown-field
+    writer          : no owner - an unrecognised writer rewrote the record
+    appended after pr=: unrecognised_field=fixture
+    expectation     : refused
+    base a09090d    : check: rejected unauthenticated state checks: <state>/task-a.check.sh
+    fixed 7f19993   : check: rejected unauthenticated state checks: <state>/task-a.check.sh
+    poll left armed after the fixed cycle: 1
+    RESULT: PASS (still refused, on both parsers)
+
+### promote-kind-mode-yolo
+    writer          : bin/fm-promote.sh fields, which must stay refused after a recorded pr=
+    appended after pr=: kind=ship|mode=no-mistakes|yolo=off
+    expectation     : refused
+    base a09090d    : check: rejected unauthenticated state checks: <state>/task-a.check.sh
+    fixed 7f19993   : check: rejected unauthenticated state checks: <state>/task-a.check.sh
+    poll left armed after the fixed cycle: 1
+    RESULT: PASS (still refused, on both parsers)
+
+### second-pr-identity
+    writer          : a forged second PR identity appended after the tolerated relaunch key
+    appended after pr=: control_relaunch_tx=tx|pr=https://github.com/attacker/repo/pull/99
+    expectation     : refused
+    base a09090d    : check: rejected unauthenticated state checks: <state>/task-a.check.sh
+    fixed 7f19993   : check: rejected unauthenticated state checks: <state>/task-a.check.sh
+    poll left armed after the fixed cycle: 1
+    RESULT: PASS (still refused, on both parsers)
+
+### malformed-pr-head
+    writer          : a malformed pr_head after the recorded pr=
+    appended after pr=: pr_head=not-a-commit-sha
+    expectation     : refused
+    base a09090d    : check: rejected unauthenticated state checks: <state>/task-a.check.sh
+    fixed 7f19993   : check: rejected unauthenticated state checks: <state>/task-a.check.sh
+    poll left armed after the fixed cycle: 1
+    RESULT: PASS (still refused, on both parsers)
+
+### tolerated-key-then-unknown
+    writer          : a tolerated key used as a prefix to smuggle an unknown one
+    appended after pr=: control_relaunch_tx=tx|spawn_gen=s1|harness=attacker-controlled
+    expectation     : refused
+    base a09090d    : check: rejected unauthenticated state checks: <state>/task-a.check.sh
+    fixed 7f19993   : check: rejected unauthenticated state checks: <state>/task-a.check.sh
+    poll left armed after the fixed cycle: 1
+    RESULT: PASS (still refused, on both parsers)
+
+DRIVER COMPLETE

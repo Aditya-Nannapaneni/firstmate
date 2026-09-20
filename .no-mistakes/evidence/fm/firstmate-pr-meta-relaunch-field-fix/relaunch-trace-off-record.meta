@@ -1,0 +1,16 @@
+window=fmses:fm-foff
+endpoint_task_id=foff
+worktree=/tmp/fm-control-relaunch.kJ3ckC/live-off-foff-7139/wt
+project=/tmp/fm-control-relaunch.kJ3ckC/live-off-foff-7139/proj
+harness=claude
+kind=ship
+mode=no-mistakes
+yolo=off
+tasktmp=/tmp/fm-foff
+model=default
+effort=default
+busy_gen=g1789905099.2155.19061
+spawn_gen=s1789905099.1703.2634
+pr=https://github.com/example/repo/pull/45
+pr_head=0123456789abcdef0123456789abcdef01234567
+control_relaunch_tx=1361.20260920T115139Z.14154

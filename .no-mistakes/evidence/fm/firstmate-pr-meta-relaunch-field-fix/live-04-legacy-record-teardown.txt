@@ -1,0 +1,44 @@
+=== landed legacy ship record with a recorded PR and a pending poll receipt ===
+
+--- record before teardown ---
+    1:window=firstmate:fm-task-x1
+    2:endpoint_task_id=task-x1
+    3:worktree=/tmp/fm-teardown-tests.kKfp0L/legacy-poll-receipt-fixed/wt
+    4:project=/tmp/fm-teardown-tests.kKfp0L/legacy-poll-receipt-fixed/project
+    5:kind=ship
+    6:mode=no-mistakes
+    7:harness=codex
+    8:pr=https://github.com/example/repository/pull/17
+    9:pr_head=0123456789abcdef0123456789abcdef01234567
+
+--- fm-teardown.sh task-x1 --legacy-record, BASE-COMMIT parser (a09090d) ---
+    REFUSED: invalid PR-poll retirement receipt; preserving task state.
+    exit status: 1
+    backlog row: in_flight
+    task record left behind: yes
+    retirement receipt left behind: yes
+    worktree already returned: no
+
+--- record the refusal left on disk ---
+    1:window=firstmate:fm-task-x1
+    2:endpoint_task_id=task-x1
+    3:worktree=/tmp/fm-teardown-tests.kKfp0L/legacy-poll-receipt-base/wt
+    4:project=/tmp/fm-teardown-tests.kKfp0L/legacy-poll-receipt-base/project
+    5:kind=ship
+    6:mode=no-mistakes
+    7:harness=codex
+    8:pr=https://github.com/example/repository/pull/17
+    9:pr_head=0123456789abcdef0123456789abcdef01234567
+    10:spawn_gen=legacy-20260920T115458Z-36520
+
+--- fm-teardown.sh task-x1 --legacy-record, FIXED parser (7f19993) ---
+    <case>/project: already current
+    teardown task-x1 complete (window firstmate:fm-task-x1, worktree <case>/wt, legacy record accepted without spawn_gen: endpoint missing, incarnation legacy-20260920T115500Z-40250)
+    Backlog: task-x1 is closed in <case>/data/backlog.md. Run bin/fm-tasks-axi.sh ready for dependency-cleared candidates, check date gates, and dispatch only work whose blockers are gone and date is due.
+    exit status: 0
+    backlog row: done
+    task record left behind: no
+    retirement receipt left behind: no
+    worktree already returned: no
+
+DRIVER COMPLETE

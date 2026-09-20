@@ -1,0 +1,17 @@
+window=fmses:fm-fon
+endpoint_task_id=fon
+worktree=/tmp/fm-control-relaunch.kJ3ckC/live-on-fon-7521/wt
+project=/tmp/fm-control-relaunch.kJ3ckC/live-on-fon-7521/proj
+harness=claude
+kind=ship
+mode=no-mistakes
+yolo=off
+tasktmp=/tmp/fm-fon
+model=default
+effort=default
+busy_gen=g1789905110.14889.1474
+spawn_gen=s1789905110.14507.14312
+pr=https://github.com/example/repo/pull/45
+pr_head=0123456789abcdef0123456789abcdef01234567
+control_relaunch_tx=14154.20260920T115150Z.1324
+traceparent=00-b4ef836375c302ce564f290e8bb7e4cc-318194d797e50bd5-01

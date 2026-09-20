@@ -1,0 +1,10 @@
+window=firstmate:fm-task-x1
+endpoint_task_id=task-x1
+worktree=/tmp/fm-teardown-tests.kKfp0L/legacy-poll-receipt-base/wt
+project=/tmp/fm-teardown-tests.kKfp0L/legacy-poll-receipt-base/project
+kind=ship
+mode=no-mistakes
+harness=codex
+pr=https://github.com/example/repository/pull/17
+pr_head=0123456789abcdef0123456789abcdef01234567
+spawn_gen=legacy-20260920T115458Z-36520

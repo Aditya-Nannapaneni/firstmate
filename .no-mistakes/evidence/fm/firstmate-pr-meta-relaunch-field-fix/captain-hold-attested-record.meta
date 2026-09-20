@@ -1,0 +1,11 @@
+window=firstmate:fm-task-f
+worktree=/tmp/fm-captain-hold.ahORH4/attest-fixed/projects/missing-task-f
+project=/tmp/fm-captain-hold.ahORH4/attest-fixed/projects/sample
+harness=codex
+kind=ship
+mode=ship
+spawn_gen=fixture-task-f
+pr=https://github.com/example/repository/pull/17
+pr_head=0123456789abcdef0123456789abcdef01234567
+decisions_reviewed=1
+decision_keys=sample-route-call

@@ -1,0 +1,77 @@
+
+================ trace context off ================
+
+--- fm-control relaunch (real, stubbed session provider) ---
+    warning: /tmp/fm-control-relaunch.kJ3ckC/live-off-foff-7139/home/data/foff/launch-brief.md records no delivery contract line (scaffolded before ship briefs recorded one); launching on the explicit --mode no-mistakes - confirm its definition of done matches
+    relaunched foff harness=claude from=claude model=default effort=default backend=tmux endpoint=fmses:fm-foff worktree=/tmp/fm-control-relaunch.kJ3ckC/live-off-foff-7139/wt
+
+--- task record after the real relaunch rewrote it ---
+    1:window=fmses:fm-foff
+    2:endpoint_task_id=foff
+    3:worktree=/tmp/fm-control-relaunch.kJ3ckC/live-off-foff-7139/wt
+    4:project=/tmp/fm-control-relaunch.kJ3ckC/live-off-foff-7139/proj
+    5:harness=claude
+    6:kind=ship
+    7:mode=no-mistakes
+    8:yolo=off
+    9:tasktmp=/tmp/fm-foff
+    10:model=default
+    11:effort=default
+    12:busy_gen=g1789905099.2155.19061
+    13:spawn_gen=s1789905099.1703.2634
+    14:pr=https://github.com/example/repo/pull/45
+    15:pr_head=0123456789abcdef0123456789abcdef01234567
+    16:control_relaunch_tx=1361.20260920T115139Z.14154
+
+--- watcher on the BASE-COMMIT parser (a09090d) ---
+    cycle 1: check: rejected unauthenticated state checks: /tmp/fm-control-relaunch.kJ3ckC/live-off-boff-31516/home/state/boff.check.sh
+    cycle 2: check: rejected unauthenticated state checks: /tmp/fm-control-relaunch.kJ3ckC/live-off-boff-31516/home/state/boff.check.sh
+    cycle 3: check: rejected unauthenticated state checks: /tmp/fm-control-relaunch.kJ3ckC/live-off-boff-31516/home/state/boff.check.sh
+    poll still armed after the base cycles: 1
+
+--- watcher on the FIXED parser (7f19993) ---
+    cycle 1: check: /tmp/fm-control-relaunch.kJ3ckC/live-off-foff-7139/home/state/foff.check.sh: merged
+    merge poll sidecar remaining after the fixed cycles: 0 (0 = retired on detection)
+
+--- durable merge outcome the fixed run left for the captain ---
+    (none)
+
+================ trace context on ================
+
+--- fm-control relaunch (real, stubbed session provider) ---
+    warning: /tmp/fm-control-relaunch.kJ3ckC/live-on-fon-7521/home/data/fon/launch-brief.md records no delivery contract line (scaffolded before ship briefs recorded one); launching on the explicit --mode no-mistakes - confirm its definition of done matches
+    relaunched fon harness=claude from=claude model=default effort=default backend=tmux endpoint=fmses:fm-fon worktree=/tmp/fm-control-relaunch.kJ3ckC/live-on-fon-7521/wt
+
+--- task record after the real relaunch rewrote it ---
+    1:window=fmses:fm-fon
+    2:endpoint_task_id=fon
+    3:worktree=/tmp/fm-control-relaunch.kJ3ckC/live-on-fon-7521/wt
+    4:project=/tmp/fm-control-relaunch.kJ3ckC/live-on-fon-7521/proj
+    5:harness=claude
+    6:kind=ship
+    7:mode=no-mistakes
+    8:yolo=off
+    9:tasktmp=/tmp/fm-fon
+    10:model=default
+    11:effort=default
+    12:busy_gen=g1789905110.14889.1474
+    13:spawn_gen=s1789905110.14507.14312
+    14:pr=https://github.com/example/repo/pull/45
+    15:pr_head=0123456789abcdef0123456789abcdef01234567
+    16:control_relaunch_tx=14154.20260920T115150Z.1324
+    17:traceparent=00-b4ef836375c302ce564f290e8bb7e4cc-318194d797e50bd5-01
+
+--- watcher on the BASE-COMMIT parser (a09090d) ---
+    cycle 1: check: rejected unauthenticated state checks: /tmp/fm-control-relaunch.kJ3ckC/live-on-bon-17210/home/state/bon.check.sh
+    cycle 2: check: rejected unauthenticated state checks: /tmp/fm-control-relaunch.kJ3ckC/live-on-bon-17210/home/state/bon.check.sh
+    cycle 3: check: rejected unauthenticated state checks: /tmp/fm-control-relaunch.kJ3ckC/live-on-bon-17210/home/state/bon.check.sh
+    poll still armed after the base cycles: 1
+
+--- watcher on the FIXED parser (7f19993) ---
+    cycle 1: check: /tmp/fm-control-relaunch.kJ3ckC/live-on-fon-7521/home/state/fon.check.sh: merged
+    merge poll sidecar remaining after the fixed cycles: 0 (0 = retired on detection)
+
+--- durable merge outcome the fixed run left for the captain ---
+    (none)
+
+DRIVER COMPLETE
