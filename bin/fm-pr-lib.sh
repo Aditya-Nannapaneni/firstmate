@@ -299,6 +299,17 @@ fm_pr_regular_destination_on_device_or_absent() {
   [ ! -e "$path" ] || [ "$(fm_pr_file_device "$path")" = "$device" ]
 }
 
+# Task-record layout: one `key=value` per line, with at most one `pr=` carrying
+# the PR identity this authenticates. Every writer strips and re-appends its own
+# keys at the END of the record - bin/fm-pr-check.sh (pr=, pr_head=),
+# bin/fm-x-lib.sh (the x_* link), bin/fm-captain-hold.sh (the decision
+# attestation) - and bin/fm-spawn.sh --relaunch rebuilds the record with its
+# owned keys first and everything else preserved after, so every one of those
+# appends lands after `pr=`. That makes the position after `pr=` the constrained
+# one: only the keys enumerated below may sit there, pr_head= must additionally
+# parse as a commit, and any other line there means a writer that does not own
+# this contract rewrote the record, so the identity is refused rather than
+# authenticated. A writer that starts appending a new key belongs in that list.
 fm_pr_metadata_identity_parse() {
   local file=$1 line value pr_count=0 seen_pr=0 post_pr_invalid=0
   FM_PR_META_PROVIDER=
@@ -329,7 +340,7 @@ fm_pr_metadata_identity_parse() {
           fm_pr_head_valid "$value" || post_pr_invalid=1
         fi
         ;;
-      control_relaunch_tx=*|x_request=*|x_request_ts=*|x_followups=*|x_platform=*|x_reply_max_chars=*)
+      control_relaunch_tx=*|decisions_reviewed=*|decision_keys=*|x_request=*|x_request_ts=*|x_followups=*|x_platform=*|x_reply_max_chars=*)
         ;;
       *)
         [ "$seen_pr" -eq 0 ] || post_pr_invalid=1

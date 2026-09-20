@@ -431,7 +431,7 @@ EOF
 }
 
 test_metadata_identity_post_pr_fields() {
-  local dir state url head file
+  local dir state url head file appended
   dir=$(make_case metadata-post-pr-fields)
   state="$dir/home/state"
   url=https://github.com/example/repository/pull/17
@@ -459,24 +459,35 @@ test_metadata_identity_post_pr_fields() {
       || fail "metadata identity parser extracted the wrong $file identity"
   done
 
-  fm_write_meta "$state/relaunched.meta" \
-    'window=fm-fixture' \
-    "pr=$url" \
-    "pr_head=$head"
-  fm_pr_poll_prepare "$state" relaunched github "$url" github.com example/repository 17 "$POLL" \
-    || fail "relaunch fixture poll preparation failed"
-  fm_pr_poll_publish_prepared || fail "relaunch fixture poll publication failed"
-  printf '%s\n' 'control_relaunch_tx=transaction-fixture' >> "$state/relaunched.meta"
-  fm_pr_metadata_identity_parse "$state/relaunched.meta" \
-    || fail "metadata identity parser rejected a relaunch transaction after PR metadata"
-  [ "$FM_PR_META_PROVIDER" = github ] \
-    && [ "$FM_PR_META_URL" = "$url" ] \
-    && [ "$FM_PR_META_HOST" = github.com ] \
-    && [ "$FM_PR_META_PATH" = example/repository ] \
-    && [ "$FM_PR_META_NUMBER" = 17 ] \
-    || fail "relaunch transaction changed the extracted PR identity"
-  fm_pr_poll_artifacts_valid "$state" relaunched "$POLL" \
-    || fail "relaunch transaction invalidated authenticated poll artifacts"
+  # The two writers that append after a recorded pr=: bin/fm-spawn.sh --relaunch
+  # emits its transaction after the preserved pr=/pr_head= block, and
+  # bin/fm-captain-hold.sh complete appends the decision attestation pair. Each
+  # record carries live poll artifacts, so the assertion is the one the watcher
+  # makes: the authenticated merge poll survives the appended lines.
+  for file in relaunched attested; do
+    case "$file" in
+      relaunched) appended='control_relaunch_tx=transaction-fixture' ;;
+      attested) appended=$'decisions_reviewed=1\ndecision_keys=sample-held-call' ;;
+    esac
+    fm_write_meta "$state/$file.meta" \
+      'window=fm-fixture' \
+      "pr=$url" \
+      "pr_head=$head"
+    fm_pr_poll_prepare "$state" "$file" github "$url" github.com example/repository 17 "$POLL" \
+      || fail "$file fixture poll preparation failed"
+    fm_pr_poll_publish_prepared || fail "$file fixture poll publication failed"
+    printf '%s\n' "$appended" >> "$state/$file.meta"
+    fm_pr_metadata_identity_parse "$state/$file.meta" \
+      || fail "metadata identity parser rejected $file state appended after PR metadata"
+    [ "$FM_PR_META_PROVIDER" = github ] \
+      && [ "$FM_PR_META_URL" = "$url" ] \
+      && [ "$FM_PR_META_HOST" = github.com ] \
+      && [ "$FM_PR_META_PATH" = example/repository ] \
+      && [ "$FM_PR_META_NUMBER" = 17 ] \
+      || fail "$file state changed the extracted PR identity"
+    fm_pr_poll_artifacts_valid "$state" "$file" "$POLL" \
+      || fail "$file state invalidated authenticated poll artifacts"
+  done
 
   fm_write_meta "$state/unrecognised.meta" \
     'window=fm-fixture' \
@@ -484,7 +495,7 @@ test_metadata_identity_post_pr_fields() {
     'unrecognised_field=fixture'
   ! fm_pr_metadata_identity_parse "$state/unrecognised.meta" \
     || fail "metadata identity parser accepted an unrecognised post-PR field"
-  pass "metadata identity parsing tolerates relaunch state without weakening post-PR validation"
+  pass "metadata identity parsing tolerates relaunch and attestation state without weakening post-PR validation"
 }
 
 test_invalid_entrypoints_have_zero_side_effects() {

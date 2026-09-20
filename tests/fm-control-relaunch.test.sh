@@ -487,6 +487,40 @@ test_relaunch_preserves_durable_task_metadata() {
   pass "fm-control relaunch: durable task metadata survives replacement launch publication"
 }
 
+# The record rewrite emits the preserved pr= block and only then appends
+# control_relaunch_tx=, so the real emission order is what the PR-identity
+# authenticator has to accept. The line-order assertion keeps this case from
+# going vacuous if a later edit moves the transaction ahead of the block.
+test_relaunch_keeps_an_armed_merge_poll_authenticated() {
+  local dir out rc url head pr_line tx_line
+  dir=$(new_case armed-poll rl45)
+  add_ship_task "$dir" rl45 claude
+  url=https://github.com/example/repo/pull/45
+  head=0123456789abcdef0123456789abcdef01234567
+  {
+    printf 'pr=%s\n' "$url"
+    printf 'pr_head=%s\n' "$head"
+  } >> "$dir/home/state/rl45.meta"
+  bash -c '
+    . "$1/bin/fm-pr-lib.sh"
+    fm_pr_poll_prepare "$2" rl45 github "$3" github.com example/repo 45 "$1/bin/fm-pr-poll.sh" \
+      && fm_pr_poll_publish_prepared
+  ' _ "$ROOT" "$dir/home/state" "$url" || fail "could not arm the task's merge poll"
+
+  out=$(run_control "$dir" rl45 relaunch --note "keep the armed merge poll authenticated"); rc=$?
+  expect_code 0 "$rc" "a relaunch with an armed merge poll should succeed"$'\n'"$out"
+  pr_line=$(grep -n '^pr=' "$dir/home/state/rl45.meta" | cut -d: -f1)
+  tx_line=$(grep -n '^control_relaunch_tx=' "$dir/home/state/rl45.meta" | cut -d: -f1)
+  [ -n "$pr_line" ] && [ -n "$tx_line" ] && [ "$tx_line" -gt "$pr_line" ] \
+    || fail "the relaunch transaction should land after the preserved pr= block, got pr='$pr_line' tx='$tx_line'"
+  bash -c '
+    . "$1/bin/fm-pr-lib.sh"
+    fm_pr_poll_artifacts_valid "$2" rl45 "$1/bin/fm-pr-poll.sh"
+  ' _ "$ROOT" "$dir/home/state" \
+    || fail "the republished record broke authentication of the armed merge poll"
+  pass "fm-control relaunch: an armed merge poll stays authenticated across the record rewrite"
+}
+
 test_relaunch_serializes_concurrent_durable_metadata_publication() {
   local dir control_pid link_pid rc i=0 traceparent prepare launch_release waiting ready release
   dir=$(new_case metadata-race rl28)
@@ -2202,6 +2236,7 @@ test_relaunch_refuses_before_exit_when_the_composer_holds_pending_text
 test_relaunch_refuses_before_exit_when_the_composer_state_is_unproven
 test_relaunch_from_linked_home_preserves_recorded_worktree
 test_relaunch_preserves_durable_task_metadata
+test_relaunch_keeps_an_armed_merge_poll_authenticated
 test_relaunch_serializes_concurrent_durable_metadata_publication
 test_disabled_relaunch_clears_prior_trace_context
 test_relaunch_appends_the_progress_note_to_the_instructions
