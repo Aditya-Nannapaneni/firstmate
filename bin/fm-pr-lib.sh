@@ -307,16 +307,21 @@ fm_pr_regular_destination_on_device_or_absent() {
 # means a writer that does not own this contract rewrote the record, so the
 # identity is refused rather than authenticated.
 #
-# The complete set of current post-`pr=` writers, all tolerated below:
-# bin/fm-pr-check.sh writes pr= and pr_head=; bin/fm-spawn.sh --relaunch
-# rebuilds the record with its owned keys first and everything else preserved
-# after, then appends control_relaunch_tx= and, for a trace-enabled home,
-# traceparent=; bin/fm-x-lib.sh writes the x_* link fields;
-# bin/fm-captain-hold.sh writes decisions_reviewed= and decision_keys=. One
-# writer is deliberately NOT tolerated: bin/fm-teardown.sh --legacy-record
-# appends a bare newline plus spawn_gen=, so a record it stamped after a
-# recorded pr= stays refused. A writer that starts appending a new key belongs
-# in one of those two lists.
+# The complete set of current writers that can append after a recorded `pr=`,
+# all tolerated below: bin/fm-pr-check.sh writes pr= and pr_head=;
+# bin/fm-spawn.sh --relaunch rebuilds the record with its owned keys first and
+# everything else preserved after, then appends control_relaunch_tx= and, for a
+# trace-enabled home, traceparent=; bin/fm-x-lib.sh writes the x_* link fields;
+# bin/fm-captain-hold.sh writes decisions_reviewed= and decision_keys=;
+# bin/fm-teardown.sh --legacy-record appends a bare newline plus spawn_gen=,
+# which that same teardown reads back when it removes the poll artifacts and
+# which outlives an abandoned attempt as a retained stamp the record keeps.
+#
+# bin/fm-promote.sh also re-appends kind=, mode=, and yolo= at the end, and
+# those three stay refused after `pr=`: promotion is gated on kind=scout and a
+# scout's delivery contract never records a PR, so a promotable record cannot
+# carry one. A writer that starts appending a new key belongs in one of those
+# two paragraphs.
 fm_pr_metadata_identity_parse() {
   local file=$1 line value pr_count=0 seen_pr=0 post_pr_invalid=0
   FM_PR_META_PROVIDER=
@@ -347,7 +352,7 @@ fm_pr_metadata_identity_parse() {
           fm_pr_head_valid "$value" || post_pr_invalid=1
         fi
         ;;
-      control_relaunch_tx=*|traceparent=*|decisions_reviewed=*|decision_keys=*|x_request=*|x_request_ts=*|x_followups=*|x_platform=*|x_reply_max_chars=*)
+      control_relaunch_tx=*|traceparent=*|spawn_gen=*|decisions_reviewed=*|decision_keys=*|x_request=*|x_request_ts=*|x_followups=*|x_platform=*|x_reply_max_chars=*)
         ;;
       *)
         [ "$seen_pr" -eq 0 ] || post_pr_invalid=1

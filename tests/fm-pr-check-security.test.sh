@@ -459,15 +459,18 @@ test_metadata_identity_post_pr_fields() {
       || fail "metadata identity parser extracted the wrong $file identity"
   done
 
-  # The two writers that append after a recorded pr=: bin/fm-spawn.sh --relaunch
-  # emits its transaction after the preserved pr=/pr_head= block, and
-  # bin/fm-captain-hold.sh complete appends the decision attestation pair. Each
-  # record carries live poll artifacts, so the assertion is the one the watcher
-  # makes: the authenticated merge poll survives the appended lines.
-  for file in relaunched attested; do
+  # The writers that append after a recorded pr=: bin/fm-spawn.sh --relaunch
+  # emits its transaction after the preserved pr=/pr_head= block,
+  # bin/fm-captain-hold.sh complete appends the decision attestation pair, and
+  # bin/fm-teardown.sh --legacy-record stamps an incarnation an abandoned
+  # attempt then leaves on the record. Each record carries live poll artifacts,
+  # so the assertion is the one the watcher makes on every cycle: the
+  # authenticated merge poll survives the appended lines.
+  for file in relaunched attested stamped; do
     case "$file" in
       relaunched) appended='control_relaunch_tx=transaction-fixture' ;;
       attested) appended=$'decisions_reviewed=1\ndecision_keys=sample-held-call' ;;
+      stamped) appended='spawn_gen=legacy-fixture' ;;
     esac
     fm_write_meta "$state/$file.meta" \
       'window=fm-fixture' \
@@ -495,7 +498,7 @@ test_metadata_identity_post_pr_fields() {
     'unrecognised_field=fixture'
   ! fm_pr_metadata_identity_parse "$state/unrecognised.meta" \
     || fail "metadata identity parser accepted an unrecognised post-PR field"
-  pass "metadata identity parsing tolerates relaunch and attestation state without weakening post-PR validation"
+  pass "metadata identity parsing tolerates relaunch, attestation, and legacy-stamp state without weakening post-PR validation"
 }
 
 test_invalid_entrypoints_have_zero_side_effects() {
