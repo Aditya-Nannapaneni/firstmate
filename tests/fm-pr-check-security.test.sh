@@ -430,6 +430,63 @@ EOF
   pass "raw-byte parser accepts canonical URLs and rejects the complete adversarial matrix"
 }
 
+test_metadata_identity_post_pr_fields() {
+  local dir state url head file
+  dir=$(make_case metadata-post-pr-fields)
+  state="$dir/home/state"
+  url=https://github.com/example/repository/pull/17
+  head=0123456789abcdef0123456789abcdef01234567
+
+  for file in plain head x-request; do
+    case "$file" in
+      plain)
+        fm_write_meta "$state/$file.meta" 'window=fm-fixture' "pr=$url"
+        ;;
+      head)
+        fm_write_meta "$state/$file.meta" 'window=fm-fixture' "pr=$url" "pr_head=$head"
+        ;;
+      x-request)
+        fm_write_meta "$state/$file.meta" 'window=fm-fixture' "pr=$url" 'x_request=request-fixture'
+        ;;
+    esac
+    fm_pr_metadata_identity_parse "$state/$file.meta" \
+      || fail "metadata identity parser rejected the $file passing case"
+    [ "$FM_PR_META_PROVIDER" = github ] \
+      && [ "$FM_PR_META_URL" = "$url" ] \
+      && [ "$FM_PR_META_HOST" = github.com ] \
+      && [ "$FM_PR_META_PATH" = example/repository ] \
+      && [ "$FM_PR_META_NUMBER" = 17 ] \
+      || fail "metadata identity parser extracted the wrong $file identity"
+  done
+
+  fm_write_meta "$state/relaunched.meta" \
+    'window=fm-fixture' \
+    "pr=$url" \
+    "pr_head=$head"
+  fm_pr_poll_prepare "$state" relaunched github "$url" github.com example/repository 17 "$POLL" \
+    || fail "relaunch fixture poll preparation failed"
+  fm_pr_poll_publish_prepared || fail "relaunch fixture poll publication failed"
+  printf '%s\n' 'control_relaunch_tx=transaction-fixture' >> "$state/relaunched.meta"
+  fm_pr_metadata_identity_parse "$state/relaunched.meta" \
+    || fail "metadata identity parser rejected a relaunch transaction after PR metadata"
+  [ "$FM_PR_META_PROVIDER" = github ] \
+    && [ "$FM_PR_META_URL" = "$url" ] \
+    && [ "$FM_PR_META_HOST" = github.com ] \
+    && [ "$FM_PR_META_PATH" = example/repository ] \
+    && [ "$FM_PR_META_NUMBER" = 17 ] \
+    || fail "relaunch transaction changed the extracted PR identity"
+  fm_pr_poll_artifacts_valid "$state" relaunched "$POLL" \
+    || fail "relaunch transaction invalidated authenticated poll artifacts"
+
+  fm_write_meta "$state/unrecognised.meta" \
+    'window=fm-fixture' \
+    "pr=$url" \
+    'unrecognised_field=fixture'
+  ! fm_pr_metadata_identity_parse "$state/unrecognised.meta" \
+    || fail "metadata identity parser accepted an unrecognised post-PR field"
+  pass "metadata identity parsing tolerates relaunch state without weakening post-PR validation"
+}
+
 test_invalid_entrypoints_have_zero_side_effects() {
   local dir before after value rc
   dir=$(make_case invalid-entrypoints)
@@ -2753,6 +2810,7 @@ SH
 }
 
 test_parser_matrix
+test_metadata_identity_post_pr_fields
 test_gitlab_merge_watch
 test_merged_poll_retires_once
 test_merged_poll_reregistration_after_notification_is_absorbed
